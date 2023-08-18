@@ -1,42 +1,28 @@
+// Initialize blocklist
 let blocklist = [];
 
-// Load the blocklist from storage
-browser.storage.local.get('blocklist').then((result) => {
+// Retrieve blocklist from storage
+browser.storage.local.get("blocklist").then(result => {
   blocklist = result.blocklist || [];
 });
 
-// Handle action button click
-browser.action.onClicked.addListener((tab) => {
-  const url = new URL(tab.url);
-  const domain = url.hostname;
-
-  // Add domain to blocklist and save
-  blocklist.push(domain);
+// Left-click action
+browser.browserAction.onClicked.addListener(tab => {
+  blocklist.push(tab.url);
   browser.storage.local.set({ blocklist });
-
-  // Close current tab
-  browser.tabs.remove(tab.id);
 });
 
-// Handle web requests
-browser.webRequest.onBeforeRequest.addListener(
-  (details) => {
-    const url = new URL(details.url);
-    if (blocklist.includes(url.hostname)) {
-      // Close the tab
-      browser.tabs.remove(details.tabId);
-      return { cancel: true };
-    }
-  },
-  { urls: ['<all_urls>'] },
-  ['blocking']
-);
-
-// Context menu for the action button
+// Right-click context menu
 browser.menus.create({
-  id: 'options',
-  title: 'Options',
-  contexts: ['action'],
-  command: '_execute_action'
+  id: "see-blocklist",
+  title: "See blocklist",
+  contexts: ["browser_action"]
+});
+
+browser.menus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === "see-blocklist") {
+    // Open the Options page
+    browser.runtime.openOptionsPage();
+  }
 });
 
