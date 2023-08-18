@@ -1,0 +1,22 @@
+
+let blockedDomains = [fake];
+console.log(blockedDomains);	
+
+browser.action.onClicked.addListener(async (tab) => {
+  console.log("Step 1");
+  let url = new URL(tab.url);
+  console.log(url);
+  let domain = url.hostname;
+  console.log(domain);
+  blockedDomains.push(domain);
+  await browser.tabs.remove(tab.id);
+});
+
+browser.webNavigation.onCommitted.addListener(async (details) => {
+  let url = new URL(details.url);
+  let domain = url.hostname;
+
+  if (blockedDomains.includes(domain)) {
+    await browser.tabs.remove(details.tabId);
+  }
+});
