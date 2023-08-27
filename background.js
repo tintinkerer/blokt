@@ -1,28 +1,33 @@
 // Initialize blocklist
+console.log("background.js loaded");
 let blocklist = [];
+console.log("blocklist created");
 
 // Retrieve blocklist from storage
-browser.storage.local.get("blocklist").then(result => {
+chrome.storage.local.get("blocklist", (result) => {
   blocklist = result.blocklist || [];
 });
+console.log("blocklist retrieved");
 
 // Left-click action
-browser.browserAction.onClicked.addListener(tab => {
+chrome.action.onClicked.addListener(tab => {
   blocklist.push(tab.url);
-  browser.storage.local.set({ blocklist });
+  chrome.storage.local.set({ blocklist });
 });
+console.log("left clicked")
 
 // Right-click context menu
-browser.menus.create({
-  id: "see-blocklist",
-  title: "See blocklist",
-  contexts: ["browser_action"]
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: "see-blocklist",
+    title: "See blocklist",
+    contexts: ["action"]
+  });
 });
 
-browser.menus.onClicked.addListener((info, tab) => {
+chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "see-blocklist") {
     // Open the Options page
-    browser.runtime.openOptionsPage();
+    chrome.runtime.openOptionsPage();
   }
 });
-

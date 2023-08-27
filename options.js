@@ -1,4 +1,4 @@
-browser.storage.local.get("blocklist").then(result => {
+chrome.storage.local.get("blocklist", result => {
   const blocklist = result.blocklist || [];
   const listElement = document.getElementById('blocklist');
   blocklist.forEach(url => {
@@ -7,4 +7,3 @@ browser.storage.local.get("blocklist").then(result => {
     listElement.appendChild(item);
   });
 });
-
