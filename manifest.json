@@ -5,6 +5,7 @@
   "description": "Blocks URLs and maintains a blocklist",
   "permissions": ["storage", "tabs"],
   "background": {
+  "persistent": "true",
     "scripts": "background.js"
   },
   "options": {
